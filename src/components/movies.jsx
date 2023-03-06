@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {getMovies} from '../services/fakeMovieService'
 import Pagination from './pagination'
 import ListGroups from './listGroups'
+import '../index.css'
 
 class Movies extends Component {
     state = { 
@@ -9,6 +10,7 @@ class Movies extends Component {
         whichIsActive : 1 ,
         moviesToShow : getMovies(),
         pageSize : 4,
+        sortedBy : ''
      } 
 
 
@@ -18,6 +20,7 @@ class Movies extends Component {
         this.changePage = this.changePage.bind(this)
         this.changeGenre = this.changeGenre.bind(this)
         this.getAllMovies = this.getAllMovies.bind(this)
+        this.sort = this.sort.bind(this)
      }
 
 
@@ -33,14 +36,14 @@ class Movies extends Component {
             return (
             <React.Fragment>
 
-            <div class="row">
-            <div class="col-2">
+            <div className="row">
+            <div className="col-2">
                 <ListGroups
                 onChangeGenre = {this.changeGenre}
                 onPressAll = {this.getAllMovies}
                 />
                 </div>    
-            <div class="col-10">
+            <div className="col-10">
 
             <main className='container'>
 
@@ -48,11 +51,11 @@ class Movies extends Component {
             <p>showing {this.state.moviesToShow.length} movies in database</p>
             <table className="table">
             <thead>
-            <tr>
-                <th>title</th>
-                <th>genre</th>
-                <th>stock</th>
-                <th>rate</th>
+            <tr className='something'>
+                <th onClick={() => this.sort("title")}>title {this.state.sortedBy.includes("title") ?  <i className="fa fa-sort" aria-hidden="true"></i> :  <i></i> } </th>
+                <th onClick={() => this.sort("genre")}>genre {this.state.sortedBy.includes("genre") ?  <i className="fa fa-sort" aria-hidden="true"></i> :  <i></i> }</th>
+                <th onClick={() => this.sort("stock")}>stock {this.state.sortedBy.includes("stock") ?  <i className="fa fa-sort" aria-hidden="true"></i> :  <i></i> }</th>
+                <th onClick={() => this.sort("rate")}>rate {this.state.sortedBy.includes("rate") ?  <i className="fa fa-sort" aria-hidden="true"></i> :  <i></i> }</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -62,11 +65,11 @@ class Movies extends Component {
             {this.state.moviesToShow.slice(this.getIndex(),this.getIndex() + 4).map(movie =>
                 (
                 <tr key={movie._id}>
-                    <td>{movie.title}</td>
+                    <td>{movie.title} </td>
                     <td>{movie.genre.name}</td>
                     <td>{movie.numberInStock}</td>
                     <td>{movie.dailyRentalRate}</td>
-                    <td><i class={movie.isLiked? this.getThis() : this.getThat()} aria-hidden="true" onClick={() => this.changeIcon(movie)} style={{cursor: 'pointer'}}></i></td>
+                    <td><i className={movie.isLiked? this.getThis() : this.getThat()} aria-hidden="true" onClick={() => this.changeIcon(movie)} style={{cursor: 'pointer'}}></i></td>
                     <td> <button onClick={() => this.handleDelete(movie)} className='btn btn-danger btn-sm'>Delete</button> </td>
                 </tr>
                 ))}
@@ -93,6 +96,98 @@ class Movies extends Component {
         
     }
 
+    sort(something){
+
+        if(something === "title"){
+
+            if(this.state.sortedBy === "title ase"){
+                const  sth = this.state.moviesToShow.sort(
+                    (a , b ) => b.title.localeCompare(a.title)
+                   )
+                   const sortOrder = something + " des"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+            }
+            else{
+
+                const  sth = this.state.moviesToShow.sort(
+                    (a , b ) => a.title.localeCompare(b.title)
+                   )
+                   const sortOrder = something + " ase"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+
+            }
+        }
+
+        if(something === "genre"){
+
+            if(this.state.sortedBy === "genre ase"){
+                const  sth = this.state.moviesToShow.sort(
+                    (a , b ) => b.genre.name.localeCompare(a.genre.name)
+                   )
+                   const sortOrder = something + " des"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+            }
+            else{
+
+                const  sth = this.state.moviesToShow.sort(
+                    (a , b ) => a.genre.name.localeCompare(b.genre.name)
+                   )
+                   const sortOrder = something + " ase"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+
+            }
+        }
+
+        if(something === "stock"){
+
+            if(this.state.sortedBy === "stock ase"){
+                const  sth = this.state.moviesToShow.sort((a, b) => b.numberInStock - a.numberInStock);
+                   const sortOrder = something + " des"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+            }
+            else{
+
+                const  sth = this.state.moviesToShow.sort((a, b) => a.numberInStock - b.numberInStock);
+                   const sortOrder = something + " ase"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+
+            }
+        }
+
+        if(something === "rate"){
+
+            if(this.state.sortedBy === "rate ase"){
+                const  sth = this.state.moviesToShow.sort((a, b) => b.dailyRentalRate - a.dailyRentalRate);
+                   const sortOrder = something + " des"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+            }
+            else{
+
+                const  sth = this.state.moviesToShow.sort((a, b) => a.dailyRentalRate - b.dailyRentalRate);
+                   const sortOrder = something + " ase"
+                   this.setState({sortedBy : sortOrder , 
+                    moviesToShow  : sth
+                })
+
+            }
+        }
+
+    }
+
     changeGenre(something){
         const newMovies = this.state.Movies
         const newNew = []
@@ -103,7 +198,7 @@ class Movies extends Component {
             }
 
         }
-        this.setState({moviesToShow : newNew})
+        this.setState({moviesToShow : newNew , whichIsActive :1})
     }
 
     getAllMovies(){
