@@ -3,6 +3,7 @@ import {getMovies} from '../services/fakeMovieService'
 import Pagination from './pagination'
 import ListGroups from './listGroups'
 import '../index.css'
+import { Link } from 'react-router-dom';
 
 class Movies extends Component {
     state = { 
@@ -36,7 +37,9 @@ class Movies extends Component {
             return (
             <React.Fragment>
 
-            <div className="row">
+                <div className='space'>
+
+                <div className="row">
             <div className="col-2">
                 <ListGroups
                 onChangeGenre = {this.changeGenre}
@@ -65,7 +68,10 @@ class Movies extends Component {
             {this.state.moviesToShow.slice(this.getIndex(),this.getIndex() + 4).map(movie =>
                 (
                 <tr key={movie._id}>
-                    <td>{movie.title} </td>
+                    <td><Link to={"/movies/" + movie._id}>{movie.title}
+                    </Link>
+                    
+                    </td>
                     <td>{movie.genre.name}</td>
                     <td>{movie.numberInStock}</td>
                     <td>{movie.dailyRentalRate}</td>
@@ -73,6 +79,7 @@ class Movies extends Component {
                     <td> <button onClick={() => this.handleDelete(movie)} className='btn btn-danger btn-sm'>Delete</button> </td>
                 </tr>
                 ))}
+                
 
             </tbody>
             </table>
@@ -87,8 +94,11 @@ class Movies extends Component {
 
                         </div>
                         </div>
+
+                </div>
         
             </React.Fragment>
+         
             )
 
         }
