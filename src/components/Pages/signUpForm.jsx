@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 
-
-class LoginForm extends Component {
-    state = { 
-        account : {username : '' , password : ''} ,
+class SignUpForm extends Component {
+    state = {
+        account : {
+            username : '' ,
+             password : '' ,
+             fullName : ''
+            } ,
         errors : {}
-     } 
+      } 
 
-    handleErrors = e => {
+
+      handleErrors = e => {
         const errors = {}
         const emptyObjc = {}
         let flag = false 
@@ -19,6 +23,12 @@ class LoginForm extends Component {
 
         if(this.state.account.password.trim() === ''){
             errors.password = 'fill the password'
+            flag = true
+        }
+
+        
+        if(this.state.account.fullName.trim() === ''){
+            errors.fullName = 'fill the name'
             flag = true
         }
 
@@ -43,12 +53,33 @@ class LoginForm extends Component {
                 return "username is not filled"
             }
 
+            if(value.trim().includes("@") === false){
+                return "username must be a valid"
+            }
+
         }
 
         if(name === "password"){
 
             if(value.trim() === ""){
                 return "password is not filled"
+            }
+
+            if(value.trim().length < 5){
+                
+                return "password lenght must be at least 5 charactor long"
+            } else{
+                
+                console.log("im here2")
+
+            }
+            
+        }
+
+        if(name === "fullName"){
+
+            if(value.trim() === ""){
+                return "name is not filled"
             }
             
         }
@@ -90,16 +121,17 @@ class LoginForm extends Component {
 
     }
 
+
     render() { 
-
-
         return (
             <div >
             <h1>
-                Login
+                Register
             </h1>
 
             <form onSubmit={this.handleSubmbit}>
+
+
             <div className="form-group">
                 <label htmlFor="username">Username</label>
                 <input 
@@ -112,6 +144,8 @@ class LoginForm extends Component {
                    />
                 {this.state.errors.username && <div className='alert alert-danger'> {this.state.errors.username} </div>  }
             </div>
+
+
             <div className="form-group">
                 <label 
                 htmlFor="password">Password</label>
@@ -123,14 +157,27 @@ class LoginForm extends Component {
                 id="password" type="password" className="form-control"  />
             {this.state.errors.password && <div className='alert alert-danger'> {this.state.errors.password} </div>  }
             </div>
-            <button  className="btn btn-primary">Login</button>
+
+
+
+            <div className="form-group">
+                <label 
+                htmlFor="fullName">Name</label>
+                <input
+                
+                name='fullName'
+                value={this.state.account.fullName}
+                onChange={this.handleChange}
+                id="fullName" type="text" className="form-control"  />
+            {this.state.errors.fullName && <div className='alert alert-danger'> {this.state.errors.fullName} </div>  }
+            </div>
+
+            <button  className="btn btn-primary">Sign Up</button>
             </form>
 
             </div>
         );
     }
-
-    
 }
  
-export default LoginForm;
+export default SignUpForm;

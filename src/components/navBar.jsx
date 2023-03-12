@@ -26,6 +26,9 @@ class Navbar extends Component {
                 <li class={this.state.whichIsActive === "login" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("login")}>
                   <Link class="nav-link" to="/login">Login</Link>
                 </li>
+                <li class={this.state.whichIsActive === "signUp" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("signUp")}>
+                  <Link class="nav-link" to="/signUp">SignUp</Link>
+                </li>
               </ul>
             </div>
           </nav>
