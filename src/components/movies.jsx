@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {getMovies} from '../services/fakeMovieService'
 import Pagination from './pagination'
 import ListGroups from './listGroups'
-import '../index.css'
+import '../index.css' 
 import { Link } from 'react-router-dom';
+import { Dropdown } from 'bootstrap';
 
 class Movies extends Component {
     state = { 
@@ -30,9 +31,14 @@ class Movies extends Component {
     render() { 
 
 
-        if (this.state.moviesToShow.length === 0){
-            return <p> there are no movies in database </p>
-        }else{
+        // if (this.state.moviesToShow.length === 0){
+
+        //     // return <p> there are no movies in database </p>
+        // }
+        if(true === false){
+
+        }
+        else{
 
             return (
             <React.Fragment>
@@ -49,8 +55,10 @@ class Movies extends Component {
             <div className="col-10">
 
             <main className='container'>
-
-             
+            <Link to="/movies/new">
+            <button className="btn btn-primary" style={{marginBottom:20}}>New Movie</button> 
+            </Link>
+                        
             <p>showing {this.state.moviesToShow.length} movies in database</p>
             <table className="table">
             <thead>
