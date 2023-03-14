@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 class NewMovie extends Component {
     
     state = { 
         account : {title : '' , genre : '' , numberInStock : '' , rate : ''
-
-    
     } ,
         errors : {} ,
         goToAnotherPage : false
@@ -111,24 +109,22 @@ class NewMovie extends Component {
         
         const errors = this.handleErrors();
         this.setState({errors : errors})
-        if(errors) return;
 
-       this.setState({goToAnotherPage : true})
-        
-
-
+        if(Object.keys(errors).length !== 0) return;        
 
         // this is where should call the server 
-        
 
+        this.props.history.push('/movies')
+
+        this.props.location.data.fromDashboard(this.state.account)
+
+        
+        
     }
 
 
     render() {
 
-        if(this.state.goToAnotherPage === true){
-            return this.props.history.push("/movies")
-        }
 
         return (
             <div >
@@ -136,7 +132,7 @@ class NewMovie extends Component {
                 Movie Form
             </h1>
 
-            <form onSubmit={this.handleSubmbit}>
+            <form onSubmit={this.handleSubmbit.bind(this)}>
 
 
             <div className="form-group">
@@ -159,9 +155,9 @@ class NewMovie extends Component {
                 </label>
             <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name='genre' onChange={this.handleChange}>
             <option selected value="blah" ></option>
-            <option value="action"  >Action</option>
-            <option value="comedy">Comedy</option>
-            <option value="thriller">Thriller</option>
+            <option value="Action"  >Action</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Thriller">Thriller</option>
             </select>
             {this.state.errors.genre && <div className='alert alert-danger'> {this.state.errors.genre} </div>  }
             </div>
@@ -212,4 +208,4 @@ class NewMovie extends Component {
 
 }
  
-export default NewMovie;
+export default withRouter (NewMovie);

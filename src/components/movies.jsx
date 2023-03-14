@@ -4,7 +4,7 @@ import Pagination from './pagination'
 import ListGroups from './listGroups'
 import '../index.css' 
 import { Link } from 'react-router-dom';
-import { Dropdown } from 'bootstrap';
+import {movies as RealMovies}  from '../services/fakeMovieService'  
 
 class Movies extends Component {
     state = { 
@@ -12,7 +12,7 @@ class Movies extends Component {
         whichIsActive : 1 ,
         moviesToShow : getMovies(),
         pageSize : 4,
-        sortedBy : ''
+        sortedBy : '',
      } 
 
 
@@ -23,6 +23,7 @@ class Movies extends Component {
         this.changeGenre = this.changeGenre.bind(this)
         this.getAllMovies = this.getAllMovies.bind(this)
         this.sort = this.sort.bind(this)
+        this.updateMovies = this.updateMovies.bind(this)
      }
 
 
@@ -55,8 +56,18 @@ class Movies extends Component {
             <div className="col-10">
 
             <main className='container'>
-            <Link to="/movies/new">
-            <button className="btn btn-primary" style={{marginBottom:20}}>New Movie</button> 
+            <Link
+            
+            to={{
+                pathname : "/movies/new" ,
+                data: { fromDashboard: this.updateMovies }
+            }}
+            
+            >
+            <button className="btn btn-primary" 
+            style={{marginBottom:20}}
+            
+            >New Movie</button> 
             </Link>
                         
             <p>showing {this.state.moviesToShow.length} movies in database</p>
@@ -112,6 +123,56 @@ class Movies extends Component {
         }
 
         
+    }
+
+    
+
+    updateMovies(something){
+
+
+       const  genresId = [
+            { name : "Thriller" , id: "5b21ca3eeb7f6fbccd471820"} ,
+           { name : "Action" , id: "5b21ca3eeb7f6fbccd471818"} ,
+           { name : "Comedy" , id: "5b21ca3eeb7f6fbccd471814"} ,
+       ]
+
+
+        const genre ={
+            name : "" ,
+            id : ""
+        }
+
+
+
+        for(let i=0 ; i<= 3;  i++) {
+            if(genresId.name === something.genre){
+                genre.name = something.genre ,
+                genre.id = genresId[i].id
+            }
+            
+        }
+
+        const newMovie = {
+            _id: "5b21ca3eeb7f6fbccd4718" +  (getMovies().length + 15).toString() ,
+            title : something.title  ,
+            genre: { _id: genre.id, name: genre.name },
+            numberInStock: something.numberInStock,
+            dailyRentalRate: something.rate,
+            isLiked : false
+        }
+
+        RealMovies.push(newMovie)
+
+        // const movies = [...this.state.Movies]
+        // const movies2 = [...this.state.moviesToShow]
+        // movies.push(newMovie)
+        // movies2.push(newMovie)
+
+        // console.log(movies)
+        // console.log(movies2)
+
+        // this.setState({Movies : movies , moviesToShow : movies2})
+
     }
 
     sort(something){
@@ -256,7 +317,6 @@ class Movies extends Component {
             return (this.state.whichIsActive - 1) *4
     }
 
-    
 
     getThis(){
         return "fa fa-heart"
