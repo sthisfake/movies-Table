@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { Component    }     from 'react';
+import { withRouter , Redirect } from 'react-router-dom';
+import { movies} from '../../services/fakeMovieService'
 
 class NewMovie extends Component {
     
@@ -7,7 +8,10 @@ class NewMovie extends Component {
         account : {title : '' , genre : '' , numberInStock : '' , rate : ''
     } ,
         errors : {} ,
-        goToAnotherPage : false
+        goToAnotherPage : false,
+        genreSelected : '' ,
+        isUpdating : false ,
+        shouldRedirect : false
      } 
 
      handleErrors = e => {
@@ -114,20 +118,62 @@ class NewMovie extends Component {
 
         // this is where should call the server 
 
+        if(this.state.isUpdating === true){
+
+        const index  =  movies.findIndex(sth => {return sth._id === this.props.match.params.id })
+
+        movies[index].genre.name = this.state.account.genre
+        movies[index].dailyRentalRate = this.state.account.rate
+        movies[index].title = this.state.account.title
+        movies[index].numberInStock = this.state.account.numberInStock
+
+        }else{
+            this.props.location.data.fromDashboard(this.state.account)
+        }
+
         this.props.history.push('/movies')
+   
+    }
 
-        this.props.location.data.fromDashboard(this.state.account)
+    componentDidMount() {
 
-        
-        
+        if(this.props.match.path !== "/movies/new"){
+
+            
+
+            const movie = movies.find(m => m._id === this.props.match.params.id )
+
+            if(movie === undefined){
+                this.setState({shouldRedirect: true})
+            }
+
+            else{
+                const newAccount = [...this.state.account]
+
+                newAccount.title = movie.title
+                newAccount.genre = movie.genre.name
+                newAccount.numberInStock = movie.numberInStock.toString()
+                newAccount.rate = movie.dailyRentalRate.toString()
+    
+                this.setState({account : newAccount , genreSelected : newAccount.genre , isUpdating:true})
+            }
+
+        }
     }
 
 
     render() {
 
+        if(this.state.shouldRedirect === true){
+            return <Redirect
+            to="/not-found"
+            />;
+        }
 
         return (
+            
             <div >
+                
             <h1>
                 Movie Form
             </h1>
@@ -154,10 +200,10 @@ class NewMovie extends Component {
                 htmlFor="genre">Genre
                 </label>
             <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name='genre' onChange={this.handleChange}>
-            <option selected value="blah" ></option>
-            <option value="Action"  >Action</option>
-            <option value="Comedy">Comedy</option>
-            <option value="Thriller">Thriller</option>
+            <option selected={this.state.genreSelected === ""} value="" ></option>
+            <option selected={this.state.genreSelected === "Action"} value="Action"  >Action</option>
+            <option selected={this.state.genreSelected === "Comedy"} value="Comedy">Comedy</option>
+            <option selected={this.state.genreSelected === "Thriller"} value="Thriller">Thriller</option>
             </select>
             {this.state.errors.genre && <div className='alert alert-danger'> {this.state.errors.genre} </div>  }
             </div>
@@ -186,7 +232,10 @@ class NewMovie extends Component {
                 value={this.state.account.rate}
                 onChange={this.handleChange}
                 id="rate"
-                 type="text"
+                 type="number"
+                 step="any"
+                 min="0.0"
+                 max="10"
 
                   className="form-control"
                    />

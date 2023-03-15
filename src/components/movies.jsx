@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import {getMovies} from '../services/fakeMovieService'
+import {getMovies , movies} from '../services/fakeMovieService'
 import Pagination from './pagination'
 import ListGroups from './listGroups'
 import '../index.css' 
-import { Link } from 'react-router-dom';
-import {movies as RealMovies}  from '../services/fakeMovieService'  
+import { Link } from 'react-router-dom'; 
 
 class Movies extends Component {
     state = { 
@@ -13,6 +12,8 @@ class Movies extends Component {
         moviesToShow : getMovies(),
         pageSize : 4,
         sortedBy : '',
+        searchValue :'' ,
+        changeToAll : false
      } 
 
 
@@ -51,6 +52,7 @@ class Movies extends Component {
                 <ListGroups
                 onChangeGenre = {this.changeGenre}
                 onPressAll = {this.getAllMovies}
+                changeToAll = {this.state.changeToAll}
                 />
                 </div>    
             <div className="col-10">
@@ -69,8 +71,22 @@ class Movies extends Component {
             
             >New Movie</button> 
             </Link>
-                        
+
             <p>showing {this.state.moviesToShow.length} movies in database</p>
+
+
+            <div className="form-group">
+                <input 
+                name='title'
+                placeholder="Search..."
+                value={this.state.searchValue}
+                onChange={this.search}
+                id="title"
+                 type="text"
+                  className="form-control"
+                />
+            </div>
+
             <table className="table">
             <thead>
             <tr className='something'>
@@ -125,28 +141,55 @@ class Movies extends Component {
         
     }
 
-    
+    search= e => {
+
+        this.changeGenre("All")
+        this.setState({changeToAll : true})
+
+        const serachThing = e.currentTarget.value
+
+        const allMovies = [...this.state.moviesToShow]
+        const matchedMovies = []
+
+        for(let i=0 ; i<allMovies.length ; i++){
+
+         const result =  allMovies[i].title.toLowerCase().includes(serachThing)
+         const result2 =  allMovies[i].title.toUpperCase().includes(serachThing)
+         if(result || result2){
+            matchedMovies.push(allMovies[i])
+         }
+
+        }
+
+        this.setState({
+            moviesToShow : matchedMovies,
+            searchValue : serachThing})
+    }
 
     updateMovies(something){
 
 
        const  genresId = [
-            { name : "Thriller" , id: "5b21ca3eeb7f6fbccd471820"} ,
-           { name : "Action" , id: "5b21ca3eeb7f6fbccd471818"} ,
-           { name : "Comedy" , id: "5b21ca3eeb7f6fbccd471814"} ,
-       ]
+            { name : "Thriller" , 
+            id: "5b21ca3eeb7f6fbccd471820"
+        } ,
+           { name : "Action" ,
+            id: "5b21ca3eeb7f6fbccd471818"
+        } ,
+           { name : "Comedy" ,
+            id: "5b21ca3eeb7f6fbccd471814"
+        } ,
+       ];
 
-
-        const genre ={
+       const genre ={
             name : "" ,
             id : ""
         }
 
+        for(let i=0 ; i< 3;  i++) {
 
-
-        for(let i=0 ; i<= 3;  i++) {
-            if(genresId.name === something.genre){
-                genre.name = something.genre ,
+            if(genresId[i].name === something.genre){
+                genre.name = something.genre 
                 genre.id = genresId[i].id
             }
             
@@ -161,17 +204,7 @@ class Movies extends Component {
             isLiked : false
         }
 
-        RealMovies.push(newMovie)
-
-        // const movies = [...this.state.Movies]
-        // const movies2 = [...this.state.moviesToShow]
-        // movies.push(newMovie)
-        // movies2.push(newMovie)
-
-        // console.log(movies)
-        // console.log(movies2)
-
-        // this.setState({Movies : movies , moviesToShow : movies2})
+        movies.push(newMovie)
 
     }
 
@@ -277,7 +310,7 @@ class Movies extends Component {
             }
 
         }
-        this.setState({moviesToShow : newNew , whichIsActive :1})
+        this.setState({moviesToShow : newNew , whichIsActive :1 ,  searchValue : "" , changeToAll : false})
     }
 
     getAllMovies(){
@@ -286,7 +319,7 @@ class Movies extends Component {
     }
 
     changePage(something){
-        this.setState({whichIsActive : something})
+        this.setState({whichIsActive : something  })
      }
 
     handleDelete(movie){
