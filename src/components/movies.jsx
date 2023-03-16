@@ -33,6 +33,9 @@ class Movies extends Component {
     render() { 
 
 
+        
+
+
         // if (this.state.moviesToShow.length === 0){
 
         //     // return <p> there are no movies in database </p>
