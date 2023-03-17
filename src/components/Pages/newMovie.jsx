@@ -1,17 +1,18 @@
 import React, { Component    }     from 'react';
 import { withRouter , Redirect } from 'react-router-dom';
-import { movies} from '../../services/fakeMovieService'
+import { getMovies }  from '../../services/movieService'
+import Axios from 'axios';
 
 class NewMovie extends Component {
     
     state = { 
-        account : {title : '' , genre : '' , numberInStock : '' , rate : ''
-    } ,
+        account : {title : '' , genre : '' , numberInStock : '' , rate : ''} ,
         errors : {} ,
         goToAnotherPage : false,
         genreSelected : '' ,
         isUpdating : false ,
-        shouldRedirect : false
+        shouldRedirect : false   ,
+        movies : []
      } 
 
      handleErrors = e => {
@@ -108,7 +109,7 @@ class NewMovie extends Component {
         this.setState({account , errors})
     }
 
-    handleSubmbit = e => {
+    handleSubmbit = async e => {
         e.preventDefault();
         
         const errors = this.handleErrors();
@@ -120,12 +121,26 @@ class NewMovie extends Component {
 
         if(this.state.isUpdating === true){
 
-        const index  =  movies.findIndex(sth => {return sth._id === this.props.match.params.id })
+        const movies = this.state.movies
 
-        movies[index].genre.name = this.state.account.genre
-        movies[index].dailyRentalRate = this.state.account.rate
-        movies[index].title = this.state.account.title
-        movies[index].numberInStock = this.state.account.numberInStock
+        const movie  =  movies.find(sth => sth._id === this.props.match.params.id )
+
+        movie.genre.name = this.state.account.genre
+        movie.dailyRentalRate = this.state.account.rate
+        movie.title = this.state.account.title
+        movie.numberInStock = this.state.account.numberInStock
+        // movie.genreId = "64136edec4984f3208bb5201"
+
+        const body = {...movie}
+        delete body._id
+
+        try{
+            const result = await Axios.put("http://localhost:3900/api/movies/" + movie._id , body)
+        } catch(ex){
+            console.log(ex)
+        }
+
+        // console.log(result)
 
         }else{
             this.props.location.data.fromDashboard(this.state.account)
@@ -135,7 +150,13 @@ class NewMovie extends Component {
    
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+
+        const sth = await getMovies();
+        const movies = sth.data
+
+        this.setState({movies : movies})
+
 
         if(this.props.match.path !== "/movies/new"){
 

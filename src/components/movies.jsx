@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import {getMovies , movies} from '../services/fakeMovieService'
+import {getMovies} from '../services/movieService'
+import {getGenres} from '../services/genreService'
 import Pagination from './pagination'
 import ListGroups from './listGroups'
 import '../index.css' 
 import { Link } from 'react-router-dom'; 
+import  axios  from 'axios';
 
 class Movies extends Component {
     state = { 
-        Movies: getMovies(),
+        Movies: [],
         whichIsActive : 1 ,
-        moviesToShow : getMovies(),
+        moviesToShow : [],
         pageSize : 4,
         sortedBy : '',
         searchValue :'' ,
@@ -25,6 +27,14 @@ class Movies extends Component {
         this.getAllMovies = this.getAllMovies.bind(this)
         this.sort = this.sort.bind(this)
         this.updateMovies = this.updateMovies.bind(this)
+     }
+
+
+     async componentDidMount(){
+
+        const sth = await getMovies();
+        this.setState({Movies : sth.data ,
+        moviesToShow : sth.data})
      }
 
 
@@ -169,20 +179,11 @@ class Movies extends Component {
             searchValue : serachThing})
     }
 
-    updateMovies(something){
+    async updateMovies(something){
 
 
-       const  genresId = [
-            { name : "Thriller" , 
-            id: "5b21ca3eeb7f6fbccd471820"
-        } ,
-           { name : "Action" ,
-            id: "5b21ca3eeb7f6fbccd471818"
-        } ,
-           { name : "Comedy" ,
-            id: "5b21ca3eeb7f6fbccd471814"
-        } ,
-       ];
+       const  sth =  await getGenres();
+       const genresId = sth.data
 
        const genre ={
             name : "" ,
@@ -207,7 +208,8 @@ class Movies extends Component {
             isLiked : false
         }
 
-        movies.push(newMovie)
+        axios.push("http://localhost:3900/api/movies" , newMovie )
+        // movies.push(newMovie)
 
     }
 
@@ -325,7 +327,11 @@ class Movies extends Component {
         this.setState({whichIsActive : something  })
      }
 
-    handleDelete(movie){
+    async handleDelete(movie){
+
+        const originalMovies = this.state.Movies 
+        const originalMoviesToShow = this.state.moviesToShow 
+
         let sth = []
         for(let i = 0 ; i < this.state.Movies.length ; i++){
             if (this.state.Movies[i]._id === movie._id){
@@ -347,6 +353,19 @@ class Movies extends Component {
         this.setState({Movies : sth,
             moviesToShow : sth2
         })
+
+        try{
+
+           await axios.delete("http://localhost:3900/api/movies" + "/" + movie._id )
+
+        }catch(ex){
+            alert("movies has been deleted before")
+            window.location.reload();
+            // this.setState({Movies : originalMovies , moviesToShow : originalMoviesToShow})
+        }
+
+        
+
     }
 
     getIndex(){
