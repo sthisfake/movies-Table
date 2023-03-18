@@ -1,6 +1,7 @@
 import React, { Component    }     from 'react';
 import { withRouter , Redirect } from 'react-router-dom';
 import { getMovies }  from '../../services/movieService'
+import { getGenres }  from '../../services/genreService'
 import Axios from 'axios';
 
 class NewMovie extends Component {
@@ -12,7 +13,8 @@ class NewMovie extends Component {
         genreSelected : '' ,
         isUpdating : false ,
         shouldRedirect : false   ,
-        movies : []
+        movies : [] ,
+        genres : []
      } 
 
      handleErrors = e => {
@@ -135,12 +137,11 @@ class NewMovie extends Component {
         delete body._id
 
         try{
-            const result = await Axios.put("http://localhost:3900/api/movies/" + movie._id , body)
+            await Axios.put("http://localhost:3900/api/movies/" + movie._id , body)
         } catch(ex){
             console.log(ex)
         }
 
-        // console.log(result)
 
         }else{
             this.props.location.data.fromDashboard(this.state.account)
@@ -154,8 +155,12 @@ class NewMovie extends Component {
 
         const sth = await getMovies();
         const movies = sth.data
+        const sth2 = await getGenres();
+        const genres = sth2.data
 
-        this.setState({movies : movies})
+        this.setState({movies : movies,
+                    genres : genres
+        })
 
 
         if(this.props.match.path !== "/movies/new"){
@@ -220,12 +225,20 @@ class NewMovie extends Component {
                 <label 
                 htmlFor="genre">Genre
                 </label>
+
+
             <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name='genre' onChange={this.handleChange}>
             <option selected={this.state.genreSelected === ""} value="" ></option>
-            <option selected={this.state.genreSelected === "Action"} value="Action"  >Action</option>
-            <option selected={this.state.genreSelected === "Comedy"} value="Comedy">Comedy</option>
-            <option selected={this.state.genreSelected === "Thriller"} value="Thriller">Thriller</option>
+
+            {this.state.genres.map(genre => 
+                (
+                    <option selected={this.state.genreSelected === genre.name} value={genre.name} > {genre.name} </option>
+                )
+                )}
             </select>
+
+
+
             {this.state.errors.genre && <div className='alert alert-danger'> {this.state.errors.genre} </div>  }
             </div>
 
