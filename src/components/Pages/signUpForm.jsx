@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import  {ResgisterUser }  from  "../../services/registerService";
 
 class SignUpForm extends Component {
     state = {
@@ -33,6 +34,7 @@ class SignUpForm extends Component {
         }
 
         if( flag === true){
+            
             return errors
         }else{
             return emptyObjc
@@ -70,7 +72,6 @@ class SignUpForm extends Component {
                 return "password lenght must be at least 5 charactor long"
             } else{
                 
-                console.log("im here2")
 
             }
             
@@ -107,17 +108,23 @@ class SignUpForm extends Component {
         this.setState({account , errors})
     }
 
-    handleSubmbit = e => {
+    handleSubmbit = async e => {
         e.preventDefault();
         
         const errors = this.handleErrors();
         this.setState({errors : errors})
         console.log(errors)
-        if(errors) return;
+        if(Object.keys(errors).length !== 0) return;   
+
+            const result  = await ResgisterUser(this.state.account)
+
+            console.log(result.data)
+    
+            console.log("done")
 
         // this is where should call the server 
 
-        console.log("done")
+
 
     }
 
