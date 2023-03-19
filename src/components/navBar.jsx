@@ -23,12 +23,37 @@ class Navbar extends Component {
                 <li class={this.state.whichIsActive === "rental" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("renteal")}>
                   <Link class="nav-link" to="/rentals">Rentals</Link>
                 </li>
-                <li class={this.state.whichIsActive === "login" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("login")}>
+
+                {
+                  ((Object.keys(this.props.user).length === 0)) && 
+                  (
+                    <React.Fragment>
+                  <li class={this.state.whichIsActive === "login" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("login")}>
                   <Link class="nav-link" to="/login">Login</Link>
                 </li>
                 <li class={this.state.whichIsActive === "signUp" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("signUp")}>
                   <Link class="nav-link" to="/signUp">SignUp</Link>
                 </li>
+                    </React.Fragment>
+                  )
+                }
+
+                {
+                  ((Object.keys(this.props.user).length !== 0)) && 
+                  (
+                    <React.Fragment>
+                  <li class={this.state.whichIsActive === "login" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("login")}>
+                  <Link class="nav-link" to="/profile">{this.props.user.name}</Link>
+                </li>
+                <li class={this.state.whichIsActive === "signUp" ? "nav-item active" : "nav-item"} onClick={() => this.changeActive("signUp")}>
+                  <Link class="nav-link" to="/logout">logout</Link>
+                </li>
+                    </React.Fragment>
+                  )
+                }
+
+
+                
               </ul>
             </div>
           </nav>

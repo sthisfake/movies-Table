@@ -113,14 +113,21 @@ class SignUpForm extends Component {
         
         const errors = this.handleErrors();
         this.setState({errors : errors})
-        console.log(errors)
         if(Object.keys(errors).length !== 0) return;   
 
+        try{
             const result  = await ResgisterUser(this.state.account)
-
-            console.log(result.data)
-    
-            console.log("done")
+            const jwt = result.headers['x-auth-token']
+            localStorage.setItem('token' , jwt)
+            window.location = "/"
+        }
+            catch(ex){
+                if(ex.response && ex.response.status === 400){
+                    const errors = {...this.state.errors}
+                    errors.username = ex.response.data
+                    this.setState({errors : errors})
+                }
+            }
 
         // this is where should call the server 
 

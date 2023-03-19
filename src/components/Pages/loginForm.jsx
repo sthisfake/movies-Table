@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { loginUser } from './../../services/authService';
 
 
 class LoginForm extends Component {
@@ -76,17 +77,29 @@ class LoginForm extends Component {
         this.setState({account , errors})
     }
 
-    handleSubmbit = e => {
+    handleSubmbit = async e => {
         e.preventDefault();
         
         const errors = this.handleErrors();
         this.setState({errors : errors})
-        console.log(errors)
-        if(errors) return;
+        if(Object.keys(errors).length !== 0) return;   
 
         // this is where should call the server 
 
-        console.log("done")
+        try{
+            const result = await loginUser(this.state.account.username , this.state.account.password)
+            const jwt = result.data
+            console.log(jwt)
+            localStorage.setItem("token" , jwt)
+            window.location = "/"
+        }
+            catch(ex){
+                if(ex.response && ex.response.status === 400){
+                    const errors = {...this.state.errors}
+                    errors.username = ex.response.data
+                    this.setState({errors : errors})
+                }
+            }
 
     }
 

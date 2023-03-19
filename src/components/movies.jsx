@@ -71,19 +71,25 @@ class Movies extends Component {
             <div className="col-10">
 
             <main className='container'>
-            <Link
+
+            {        
+            (Object.keys(this.props.user).length !== 0)
+             &&
+           (<Link
+                
+                to={{
+                    pathname : "/movies/new" ,
+                    data: { fromDashboard: this.updateMovies }
+                }}
+                
+                >
+                <button className="btn btn-primary" 
+                style={{marginBottom:20}}
+                
+                >New Movie</button> 
+                </Link>)
             
-            to={{
-                pathname : "/movies/new" ,
-                data: { fromDashboard: this.updateMovies }
-            }}
-            
-            >
-            <button className="btn btn-primary" 
-            style={{marginBottom:20}}
-            
-            >New Movie</button> 
-            </Link>
+            }
 
             <p>showing {this.state.moviesToShow.length} movies in database</p>
 
